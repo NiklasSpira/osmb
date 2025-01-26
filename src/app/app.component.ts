@@ -11,7 +11,7 @@ import { HeaderComponent } from './header/header.component'; // Importiere die H
 import { MainPageContentComponent } from './main-page-content/main-page-content.component';
 import { MainPageCarousselComponent } from './main-page-caroussel/main-page-caroussel.component';
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+
 @Component({
   selector: 'app-root',
   imports: [

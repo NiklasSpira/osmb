@@ -8,11 +8,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
 
 @Component({
   selector: 'app-header',
   imports: [
-    RouterOutlet,
     MatSlideToggleModule,
     MatButtonModule,
     FormsModule,
@@ -20,7 +21,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatMenuModule,
     MatIconModule,
-    HeaderComponent,
+    LoginDialogComponent,
+    RegisterDialogComponent,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
