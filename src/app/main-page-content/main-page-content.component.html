@@ -1,0 +1,9 @@
+<div class="content__pictures">
+  <mat-grid-list cols="8" rowHeight="1:1" gutterSize="4px">
+    @for (picture of arr; track picture.id) {
+    <mat-grid-tile class="picture"
+      ><img class="picture__img" src="{{ picture.url }}"
+    /></mat-grid-tile>
+    }
+  </mat-grid-list>
+</div>

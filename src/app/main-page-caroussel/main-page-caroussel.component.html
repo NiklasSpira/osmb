@@ -1,0 +1,15 @@
+<div class="carousel">
+  <p-carousel [value]="arr" [numVisible]="5" [numScroll]="5" [circular]="false">
+    <ng-template let-picture #item
+      ><div>
+        <div class="carousel__infos">
+          <h1>{{ picture.name }}</h1>
+          <h2>{{ picture.description }}</h2>
+        </div>
+        <div class="carousel__img_container">
+          <img class="carousel__img_container__img" src="{{ picture.url }}" />
+        </div>
+      </div>
+    </ng-template>
+  </p-carousel>
+</div>
