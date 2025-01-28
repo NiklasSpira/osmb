@@ -7,4 +7,29 @@
     &__img {
     }
   }
+  .picture__container {
+    position: relative;
+    display: inline-block;
+  }
+  .picture__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+  .picture__name {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 14px;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
+  }
+  .picture__container:hover .picture__name {
+    opacity: 1; /* Show on hover */
+  }
 }

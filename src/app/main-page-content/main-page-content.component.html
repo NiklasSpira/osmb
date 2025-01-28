@@ -3,12 +3,16 @@
   <div class="content__pictures">
     <mat-grid-list cols="8" rowHeight="1:1" gutterSize="4px">
       @for (picture of arr; track picture.id) {
-      <mat-grid-tile class="picture"
-        ><img
-          class="picture__img"
-          src="{{ picture.url }}"
-          (click)="openPicture()"
-      /></mat-grid-tile>
+      <mat-grid-tile class="picture">
+        <div class="picture__container">
+          <img
+            class="picture__img"
+            src="{{ picture.url }}"
+            (click)="openPicture()"
+          />
+          <div class="picture__name">{{ picture.name }}</div>
+        </div></mat-grid-tile
+      >
       }
     </mat-grid-list>
   </div>

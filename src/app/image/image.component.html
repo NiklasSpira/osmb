@@ -1,1 +1,31 @@
-<p>image-component works!</p>
+post-details.component.html html Kopieren
+<div class="post-container">
+  <div class="post-image">
+    <img [src]="post.imageUrl" alt="Post Image" />
+  </div>
+  <div class="post-info">
+    <div class="author-info">
+      <img
+        [src]="post.authorProfile"
+        alt="Author Profile"
+        class="author-profile"
+      />
+      <h2 class="author-name">{{ post.author }}</h2>
+    </div>
+
+    <div class="like-dislike-buttons">
+      <button (click)="likePost()">Like ({{ likeCount }})</button>
+      <button (click)="dislikePost()">Dislike ({{ dislikeCount }})</button>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments">
+      <h3>Comments:</h3>
+      <div>{{ post }}</div>
+      <ul>
+        <li @for(comment of comments; track comment.author)></li>
+        <strong>{{ comment.author }}:</strong>
+      </ul>
+    </div>
+  </div>
+</div>
