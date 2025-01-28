@@ -7,10 +7,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { HeaderComponent } from './header/header.component'; // Importiere die Header-Komponente
+import { HeaderComponent } from './header/header.component';
 import { MainPageContentComponent } from './main-page-content/main-page-content.component';
 import { MainPageCarousselComponent } from './main-page-caroussel/main-page-caroussel.component';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -24,11 +25,15 @@ import { CommonModule } from '@angular/common';
     MatMenuModule,
     MatIconModule,
     HeaderComponent,
-    MainPageContentComponent,
-    MainPageCarousselComponent,
     CommonModule,
+    RouterModule,
+    RouterOutlet,
   ],
-  templateUrl: './app.component.html',
+  template: ` <main>
+    <app-header></app-header>
+    <router-outlet></router-outlet>
+  </main>`,
+
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
