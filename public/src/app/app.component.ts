@@ -12,6 +12,8 @@ import { MainPageContentComponent } from './main-page-content/main-page-content.
 import { MainPageCarousselComponent } from './main-page-caroussel/main-page-caroussel.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Toast } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -28,8 +30,11 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule,
     RouterOutlet,
+    Toast,
   ],
+  providers: [MessageService],
   template: ` <main>
+    <p-toast />
     <app-header></app-header>
     <router-outlet></router-outlet>
   </main>`,
@@ -38,4 +43,5 @@ import { RouterModule } from '@angular/router';
 })
 export class AppComponent {
   title = 'OSMB';
+  constructor(private messageService: MessageService) {}
 }

@@ -7,10 +7,17 @@
   align-items: center;
   gap: 20px;
 }
+.p-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
 .header__logo {
   color: white;
   font-size: 1.5em;
   font-weight: bold;
+  cursor: pointer;
 }
 .header__container {
   display: flex;

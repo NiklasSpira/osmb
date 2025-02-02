@@ -1,0 +1,109 @@
+<div class="profile-page">
+  <div class="left-section">
+    <div class="user-container">
+      <img src="https://picsum.photos/400/400?random=1" />
+      <h1>John doe</h1>
+      <span>Photographer</span>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat.
+      </p>
+      <div class="user-info">
+        <div class="left">
+          <span>age:</span>
+          <span>location:</span>
+        </div>
+        <div class="right"><span>24</span> <span>Saarbrücken</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="mid-section">
+    <div class="user-posts">
+      <mat-grid-list cols="4" rowHeight="1:1" gutterSize="4px">
+        @for (picture of arr; track picture.id) {
+        <mat-grid-tile class="picture">
+          <div class="picture__container">
+            <img
+              class="picture__img"
+              src="{{ picture.url }}"
+              (click)="navigateToImage(picture.id)"
+            />
+            <div class="picture__name">{{ picture.name }}</div>
+          </div></mat-grid-tile
+        >
+        }
+      </mat-grid-list>
+    </div>
+  </div>
+  <div class="right-section">
+    <h1>User Activity</h1>
+    <div class="activity-container">
+      <div class="container">
+        <div class="comment">
+          <div class="comment-header">
+            <span class="username">John Doe</span>
+            <span class="timestamp">2 hours ago</span>
+          </div>
+          <div class="comment-body">Great photo! The colors are amazing.</div>
+          <button class="reply-btn">View Thread</button>
+        </div>
+      </div>
+      <div class="container">
+        <div class="comment">
+          <div class="comment-header">
+            <span class="username">John Doe</span>
+            <span class="timestamp">3 hours ago</span>
+          </div>
+          <div class="comment-body">I love this place, it's so beautiful!</div>
+          <button class="reply-btn">View Thread</button>
+        </div>
+      </div>
+      <div class="container">
+        <div class="comment">
+          <div class="comment-header">
+            <span class="username">John Doe</span>
+            <span class="timestamp">5 hours ago</span>
+          </div>
+          <div class="comment-body">Amazing shot! What camera did you use?</div>
+          <button class="reply-btn">View Thread</button>
+        </div>
+      </div>
+      <div class="container">
+        <div class="comment">
+          <div class="comment-header">
+            <span class="username">John Doe</span>
+            <span class="timestamp">1 day ago</span>
+          </div>
+          <div class="comment-body">
+            This is stunning! The composition is perfect.
+          </div>
+          <button class="reply-btn">View Thread</button>
+        </div>
+      </div>
+      <div class="container">
+        <div class="comment">
+          <div class="comment-header">
+            <span class="username">John Doe</span>
+            <span class="timestamp">2 days ago</span>
+          </div>
+          <div class="comment-body">
+            Beautiful capture! The lighting is fantastic.
+          </div>
+          <button class="reply-btn">View Thread</button>
+        </div>
+      </div>
+      <div class="container">
+        <div class="comment">
+          <div class="comment-header">
+            <span class="username">John Doe</span>
+            <span class="timestamp">3 days ago</span>
+          </div>
+          <div class="comment-body">Incredible work! Keep it up.</div>
+          <button class="reply-btn">View Thread</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

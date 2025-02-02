@@ -8,7 +8,7 @@
           <img
             class="picture__img"
             src="{{ picture.url }}"
-            (click)="openPicture()"
+            (click)="navigateToImage(picture.id)"
           />
           <div class="picture__name">{{ picture.name }}</div>
         </div></mat-grid-tile

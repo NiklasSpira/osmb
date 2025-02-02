@@ -1,7 +1,7 @@
 <div class="header">
-  <div class="header__logo">OSMB</div>
+  <div class="header__logo" (click)="navigateToHome()">OSMB</div>
   <div class="header__container">
-    <button mat-raised-button>Explore</button
+    <button mat-raised-button (click)="navigateToHome()">Explore</button
     ><button mat-raised-button>Liked Content</button>
   </div>
   <div class="search_form">
@@ -12,15 +12,26 @@
     </div>
   </div>
   <div class="header__container">
-    <app-login-dialog></app-login-dialog>
-    <app-register-dialog></app-register-dialog>
+    <div *ngIf="user; else noUser">
+      <p-avatar
+        (click)="navigateToOwnPage()"
+        label="U"
+        size="large"
+        shape="circle"
+      />
+    </div>
+
+    <ng-template #noUser>
+      <app-login-dialog></app-login-dialog>
+      <app-register-dialog></app-register-dialog>
+    </ng-template>
   </div>
   <div class="header__container">
     <button mat-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>Item 1</button>
+      <button mat-menu-item (click)="onLogout()">Logout</button>
       <button mat-menu-item>Item 2</button>
     </mat-menu>
   </div>
