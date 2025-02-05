@@ -1,13 +1,17 @@
 import express, { Router } from 'express';
 import { Request, Response } from "express";
-import { Image, User } from '@prisma/client';
-import { addNewImage, getImageById, getImageByIdWithUser, getImagesWithPagination } from '../controllers/image.controller';
-import { ImageWithUser, ImageData, LikeData } from '../types';
+import { Image } from '@prisma/client';
+import { addNewImage, getImageDeepById, getImagesWithPagination } from '../controllers/image.controller';
+import { ImageDeep, ImageData, LikeData } from '../types';
 import { toggleLike } from '../controllers/imageLike.controller';
-import { deletePicture, uploadPicture } from '../service/file_upload.service';
+import { deletePicture, uploadPicture } from '../service/file_handler.service';
 
 const imageRouter:Router = express.Router();
 
+/**
+ * Get route /image/[imageId]
+ * Returns an image by its id
+ */
 imageRouter.get("/:id", async (req:Request, res:Response) => {
     try{
         const imageId:number = parseInt(req.params.id, 10);
@@ -18,7 +22,7 @@ imageRouter.get("/:id", async (req:Request, res:Response) => {
             });
             return;
         }
-        const image:ImageWithUser|null = await getImageByIdWithUser(imageId);
+        const image:ImageDeep|null = await getImageDeepById(imageId);
         if(!image){
             res.status(404).json({
                 status: "Failure",
@@ -26,17 +30,21 @@ imageRouter.get("/:id", async (req:Request, res:Response) => {
             });
             return;
         }
-        res.send({
-            image: {
-                likeCount: image.likeCount,
-                created: image.created,
-                src: image.source,
-                user:{
-                    username: image.user.username
-                }
-            }
-
-        })
+        const imageData:ImageData = {
+            id: image.id,
+            likeCount: image.likeCount,
+            created: image.created.toISOString(),
+            src: image.source,
+            title: image.title,
+            description: image.description,
+            user: image.user ? {
+                id: image.userId,
+                username: image.user.username,
+                profilePictureSrc: image.user?.profilePictureSrc
+            } : undefined
+        }
+        res.send(imageData);
+        return;
     }
     catch(error){
         console.error(error);
@@ -46,6 +54,10 @@ imageRouter.get("/:id", async (req:Request, res:Response) => {
     }
 });
 
+/**
+ * Get route /image/images/[page] 
+ * Returns a page of images
+ */
 imageRouter.get("/images/:page", async (req:Request, res:Response) => {
     const page:number = parseInt(req.params.page, 10);
     console.log("In imageRouter, page is: " + page)
@@ -67,16 +79,15 @@ imageRouter.get("/images/:page", async (req:Request, res:Response) => {
                     src: image.source,
                     title: image.title,
                     description: image.description,
-                    user: {
+                    user: image.user ? {
                         id: image.userId,
                         username: image.user.username,
                         profilePictureSrc: image.user.profilePictureSrc
-                    }
+                    } : undefined
                 }
             )
         });
         res.send(imagesReturn)
-
     }
     catch(error){
         console.error(error);
@@ -86,6 +97,10 @@ imageRouter.get("/images/:page", async (req:Request, res:Response) => {
     }
 });
 
+/**
+ * Post route /image/[imageId]/like 
+ * Adds or removes a like by a user on an image
+ */
 imageRouter.post("/:imageId/like", async (req:Request, res:Response) => {
     const imageId:number = parseInt(req.params.imageId);
     if(Number.isNaN(imageId)){
@@ -124,6 +139,10 @@ imageRouter.post("/:imageId/like", async (req:Request, res:Response) => {
     }
 });
 
+/**
+ * Post route /image/upload 
+ * Adds an image to the picture folder and the database
+ */
 imageRouter.post("/upload", uploadPicture.single('picture'), async (req:Request, res: Response) => {
     try{
         if(!req.file){

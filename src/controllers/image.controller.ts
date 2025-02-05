@@ -1,8 +1,16 @@
 import { Image, Prisma, PrismaClient, User } from "@prisma/client";
-import { ImageWithUser } from "../types";
+import { ImageDeep } from "../types";
 
 const prisma = new PrismaClient()
 
+/**
+ * Function addNewImage adds a new image to the database
+ * @param title - The title of the image
+ * @param source - The source of the image
+ * @param userId - The id of the user who added the image
+ * @param description - The image description
+ * @returns The newly added image
+ */
 export async function addNewImage(title:string, source:string, userId:number, description:string){
     try{
         const image:Image = await prisma.image.create({
@@ -21,7 +29,11 @@ export async function addNewImage(title:string, source:string, userId:number, de
     }
 }
 
-
+/**
+ * Function getImageById returns an image by its id
+ * @param imageId - The id of the image to be retrieved
+ * @returns The image specified by the imageId
+ */
 export async function getImageById(imageId: number) {
     try {
         const image:Image|null = await prisma.image.findUnique({
@@ -37,9 +49,15 @@ export async function getImageById(imageId: number) {
     }
 }
 
-export async function getImageByIdWithUser(imageId: number) {
+
+/**
+ * Function getImageDeepById returns a deep image by its id
+ * @param imageId - The id of the image to be retrieved
+ * @returns The image specified by the imageId
+ */
+export async function getImageDeepById(imageId: number) {
     try {
-        const image:ImageWithUser|null = await prisma.image.findUnique({
+        const image:ImageDeep|null = await prisma.image.findUnique({
             where: {
                 id: imageId,
             },
@@ -55,12 +73,17 @@ export async function getImageByIdWithUser(imageId: number) {
     }
 }
 
+/**
+ * Function getImagesByWithPagination returns images with pagination
+ * @param page - The page of the images to be retrieved
+ * @returns The page of images
+ */
 export async function getImagesWithPagination(page:number){
     const pageSize = 20
     const skip = (page - 1) * pageSize;
     console.log("In images with pagination! skip: " + skip)
     try {
-        const images:ImageWithUser[] = await prisma.image.findMany({
+        const images:ImageDeep[] = await prisma.image.findMany({
             skip,
             take: pageSize,
             orderBy: {

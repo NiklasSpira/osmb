@@ -1,8 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import { LikeData } from "../types";
 
+
 const prisma = new PrismaClient()
 
+/**
+ * Function likeImage gives an image a like by a user
+ * @param userId - The id of the user who liked the image
+ * @param imageId - The id of the image the user liked
+ */
 async function likeImage(userId: number, imageId: number){
     try {
         await prisma.$transaction(async (prisma) => {
@@ -22,23 +28,22 @@ async function likeImage(userId: number, imageId: number){
             },
           });
         });
-    
-        console.log('Image liked successfully within a transaction.');
       } catch (error) {
         console.error('Transaction failed:', error);
         throw new Error("Error adding like!");
       }
 }
 
+/**
+ * Function removeLike removes a like from an image by a user
+ * @param userId - The id of the user who removed the like from the image
+ * @param imageId - The id of the image the user removed the like from
+ */
 async function removeLike(userId: number, imageId: number) {
     try {
-      // Use a transaction to ensure both operations succeed together
       await prisma.$transaction(async (tx) => {
-        // Delete the ImageLike relation using the composite primary key.
         await tx.imageLike.delete({
           where: {
-            // Prisma generates a compound field name based on the fields defined in @@id.
-            // Here, it's assumed to be `userId_imageId`.
             userId_imageId: {
               userId,
               imageId,
@@ -46,7 +51,6 @@ async function removeLike(userId: number, imageId: number) {
           },
         });
   
-        // Decrement the likeCount on the Image model.
         await tx.image.update({
           where: { id: imageId },
           data: {
@@ -54,17 +58,20 @@ async function removeLike(userId: number, imageId: number) {
           },
         });
       });
-  
-      console.log('Successfully removed like');
     } catch (error) {
       console.error('Failed to remove like:', error);
-      // Optionally re-throw the error if you want it handled further up.
       throw new Error("Error removing like!")
     }
   }
 
-  
-export async function toggleLike(userId: number, imageId: number): Promise<LikeData|undefined> {
+
+  /**
+   * Function toggleLike toggles the like of a user on an image
+   * @param userId - The id of the user who toggled the like on the image
+   * @param imageId - The id of the image the user toggled the like on
+   * @returns The updated image
+   */
+export async function toggleLike(userId: number, imageId: number){
     try {
       // Check if the like relation already exists
       const existingLike = await prisma.imageLike.findUnique({
@@ -77,14 +84,14 @@ export async function toggleLike(userId: number, imageId: number): Promise<LikeD
       });
   
       if (existingLike) {
-        // If a like exists, remove it
+        //If a like exists, remove it
         await removeLike(userId, imageId);
         return {
           likeRemoved: true,
           likeAdded: false
         };
       } else {
-        // Otherwise, add a like
+        //Otherwise, add a like
         await likeImage(userId, imageId);
         return {
           likeRemoved: false,

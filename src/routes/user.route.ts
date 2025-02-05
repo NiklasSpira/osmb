@@ -1,12 +1,16 @@
-import { User, Image, ImageLike } from '@prisma/client';
+import { User, Image } from '@prisma/client';
 import express from 'express';
 import { Request, Response } from 'express';
 import { addNewUser, getUserById, getUserByIdDeep, getUserByUsername, updateProfilePicture, userExists } from '../controllers/user.controller';
 import { hashPassword, verifyPassword } from '../service/password.service';
 import { ImageData, ImageLikeDeep, UserData, UserDeep } from '../types';
-import { uploadProfilePicture } from '../service/file_upload.service';
+import { uploadProfilePicture } from '../service/file_handler.service';
 const userRouter = express.Router();
 
+/**
+ * Get route /user/auth
+ * Checks if a user is authenticated
+ */
 userRouter.get('/auth', async (req: Request, res: Response) => {
     if(req.session.userId){
         const user : User|null|undefined = await getUserById(req.session.userId)
@@ -29,7 +33,10 @@ userRouter.get('/auth', async (req: Request, res: Response) => {
     }
 });
 
-
+/**
+ * Post route /user/login 
+ * Logs a user in
+ */
 userRouter.post("/login", async (req: Request, res: Response) => {
     try {
         const user : User|null|undefined = await getUserByUsername(req.body.username);
@@ -69,6 +76,10 @@ userRouter.post("/login", async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * Post route /user/register 
+ * Registers a new user
+ */
 userRouter.post("/register", async(req:Request, res:Response) => {
     try{
         const username:string = req.body.username;
@@ -103,6 +114,10 @@ userRouter.post("/register", async(req:Request, res:Response) => {
     }
 });
 
+/**
+ * Post route /user/[userId]
+ * Returns a user by its id
+ */
 userRouter.get("/:userId", async(req:Request, res:Response) => {
     const userId:number = parseInt(req.params.userId);
     if(Number.isNaN(userId)){
@@ -163,11 +178,12 @@ userRouter.get("/:userId", async(req:Request, res:Response) => {
     }
     res.send(userData);
     return;
-    
-    
-
 });
 
+/**
+ * Post route /user/upload/profile_picture
+ * Uploads a new profile_picture and adds it to the database
+ */
 userRouter.post('/upload/profile_picture', uploadProfilePicture.single('profile_picture'), async (req:Request, res:Response) => {
     try{
         if(!req.file){
@@ -196,5 +212,5 @@ userRouter.post('/upload/profile_picture', uploadProfilePicture.single('profile_
         res.status(500).json({error: "Fehler beim hochladen des Profilbildes!"});
     }
 
-})
+});
 export default userRouter;

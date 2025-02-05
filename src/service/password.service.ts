@@ -5,7 +5,7 @@ const saltRounds = 10;
 
 /**
  * Hashes a plain text password.
- * @param password - The plain text password.
+ * @param password
  * @returns The hashed password.
  */
 export async function hashPassword(password: string): Promise<string> {

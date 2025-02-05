@@ -7,6 +7,12 @@ const commentRouter:Router = express.Router();
 type CommentQuery = {
     imageId?: string
 }
+
+/**
+ * Get route /comment
+ * Retrieves all comments of an image (/comment?imageId=[imageId])
+ * or every comment (/comment)
+ */
 commentRouter.get('/', async (req:Request, res:Response) => {
     try{
         const { imageId }:CommentQuery = req.query
@@ -35,6 +41,8 @@ commentRouter.get('/', async (req:Request, res:Response) => {
                     }
                 )
             });
+            res.send(commentDataList);
+            return;
         }
         else{
             const comments:CommentDeep[] = await getAllComments();
@@ -53,6 +61,8 @@ commentRouter.get('/', async (req:Request, res:Response) => {
                     }
                 )
             });
+            res.send(commentDataList);
+            return;
         }
     }catch(error){
         console.error(error);
@@ -62,13 +72,26 @@ commentRouter.get('/', async (req:Request, res:Response) => {
     }
 });
 
+/**
+ * Post route /comment 
+ * Posts a comment related to an user and an image
+ */
 commentRouter.post('/', async (req:Request, res:Response) => {
     try{
         const content:string = req.body.content;
         const userId:number|undefined = req.session.userId;
-        const imageId:number = req.body.imageId;
+        const { imageId }:CommentQuery = req.query
+        if(!imageId){
+            res.status(400).json({error: "ImageId missing in queryparameters!"});
+            return;
+        }
+        const parsedImageId = parseInt(imageId);
+        if(isNaN(parsedImageId)){
+            res.status(401).json({error: "Invalid imageId!"});
+        }
+
         if(userId){
-            const comment:Comment = await addComment(content, userId, imageId);
+            const comment:Comment = await addComment(content, userId, parsedImageId);
             const commentData:CommentData = {
                 id: comment.id,
                 content: comment.content,
@@ -83,4 +106,6 @@ commentRouter.post('/', async (req:Request, res:Response) => {
             error: "Error adding comment!"
         });
     }
-})
+});
+
+export default commentRouter;

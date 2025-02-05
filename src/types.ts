@@ -1,5 +1,5 @@
 import { Image, ImageLike, User, Comment } from '@prisma/client';
-export type ImageWithUser = Image & { user: User };
+export type ImageDeep = Image & { user?: User, comments?: Comment[] };
 export type CommentDeep = Comment & 
 {
   user?: User,

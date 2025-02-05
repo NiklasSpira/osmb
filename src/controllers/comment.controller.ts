@@ -3,7 +3,13 @@ import { CommentDeep } from "../types";
 
 const prisma = new PrismaClient();
 
-
+/**
+ * Function addComment adds a comment to the database
+ * @param content - The content of the comment
+ * @param userId - The id of the user who added the comment
+ * @param imageId - The id of the image the comment belongs to
+ * @returns The added comment
+ */
 export async function addComment(content: string, userId: number, imageId: number){
     try{
         const newComment:Comment = await prisma.comment.create({
@@ -21,6 +27,12 @@ export async function addComment(content: string, userId: number, imageId: numbe
     }
 }
 
+/**
+ * Function getCommentsByImageId 
+ * returns all comments of an image from the database
+ * @param imageId - The id of the image the comments belongs to
+ * @returns All comments belonging to the image specified by imageId
+ */
 export async function getCommentsByImageId(imageId: number){
     try{
         const comments:CommentDeep[] = await prisma.comment.findMany({
@@ -40,6 +52,10 @@ export async function getCommentsByImageId(imageId: number){
     }
 }
 
+/**
+ * Function getAllComments returns all comments in the database
+ * @returns All comments in the database
+ */
 export async function getAllComments(){
     try{
         const comments:CommentDeep[] = await prisma.comment.findMany({
