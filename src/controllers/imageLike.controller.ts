@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { LikeData } from "../types";
 
 const prisma = new PrismaClient()
 
@@ -25,6 +26,7 @@ async function likeImage(userId: number, imageId: number){
         console.log('Image liked successfully within a transaction.');
       } catch (error) {
         console.error('Transaction failed:', error);
+        throw new Error("Error adding like!");
       }
 }
 
@@ -57,12 +59,12 @@ async function removeLike(userId: number, imageId: number) {
     } catch (error) {
       console.error('Failed to remove like:', error);
       // Optionally re-throw the error if you want it handled further up.
-      throw error;
+      throw new Error("Error removing like!")
     }
   }
 
   
-export async function toggleLike(userId: number, imageId: number) {
+export async function toggleLike(userId: number, imageId: number): Promise<LikeData|undefined> {
     try {
       // Check if the like relation already exists
       const existingLike = await prisma.imageLike.findUnique({
@@ -77,13 +79,20 @@ export async function toggleLike(userId: number, imageId: number) {
       if (existingLike) {
         // If a like exists, remove it
         await removeLike(userId, imageId);
-        console.log("Like removed.");
+        return {
+          likeRemoved: true,
+          likeAdded: false
+        };
       } else {
         // Otherwise, add a like
         await likeImage(userId, imageId);
-        console.log("Like added.");
+        return {
+          likeRemoved: false,
+          likeAdded: true
+        };
       }
     } catch (error) {
       console.error("Error toggling like:", error);
+      throw new Error("Error toggling like!");
     }
 }

@@ -3,16 +3,35 @@ import express, { Request, Response, NextFunction } from 'express';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import { PrismaClient } from '@prisma/client';
 import cors, { CorsOptions } from 'cors';
-import { addNewUser } from './controllers/user.controller';
-import { addNewImage } from './controllers/image.controller';
-import { toggleLike } from './controllers/imageLike.controller';
 import session from 'express-session';
 import userRouter from './routes/user.route';
+import imageRouter from './routes/image.route';
+import dotenv from 'dotenv';
+
 declare module 'express-session' {
   export interface SessionData {
       userId: number;
   }
 }
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+// Helper function to get environment variables and throw an error if missing
+const getEnv = (key: string): string => {
+  console.log(key)
+  const value = process.env[key];
+  console.log(value)
+  if (value === undefined) {
+    throw new Error(`⚠️ Missing required environment variable: ${key}`);
+  }
+  return value;
+};
+
+// Load static paths and public routes
+const FRONTEND_PATH = getEnv('FRONTEND_PATH');
+const PICTURE_PATH = getEnv('PICTURES_PATH');
+const PROFILE_PICTURE_PATH = getEnv('PROFILE_PICTURES_PATH');
+const PUBLIC_ROUTES = getEnv('PUBLIC_ROUTES').split(',');
 const app = express();
 const prisma = new PrismaClient()
 // Define CORS options to specify allowed origins, methods, and headers
@@ -35,17 +54,18 @@ app.use(session({
   })
 }));
 
-const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware =  (req: Request, res: Response, next: NextFunction) => {
   // Define routes that should be accessible without authentication
-  const publicPaths = ['/register', '/login'];
+    
 
   // Skip authentication for public routes
-  if (publicPaths.some((path) => req.url.startsWith(path))) {
+  if (PUBLIC_ROUTES.some((path) => req.url.endsWith(path))) {
     return next();
   }
   // If no session, reject the request
   if (!req.session.userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
   }
   next();
 };
@@ -57,11 +77,19 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Serve static files from the 'dist/public/osmb/browser' directory
-app.use(express.static(path.join(__dirname, '../public/dist/osmb/browser')));
+// Serve frontend (if you are using Angular or another frontend in 'public/dist/osmb/browser')
+app.use(express.static(path.join(__dirname, '..', FRONTEND_PATH)));
 
+// Serve images (uploaded pictures)
+app.use('/pictures', express.static(path.join(__dirname, '../', PICTURE_PATH)));
+
+app.use('/profile_pictures', express.static(path.join(__dirname, '..', PROFILE_PICTURE_PATH)));
+
+app.use(authMiddleware);
 // Handle OPTIONS requests to support CORS preflight
 app.options('*', cors(corsOptions));
-app.use('/', userRouter)
+app.use('/api/user', userRouter);
+app.use('/api/image/', imageRouter);
 
 app.listen(8000, () => {
   console.log('Server running on http://localhost:8000');
